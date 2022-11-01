@@ -13,57 +13,9 @@ use App\Demo\entity\Personne;
 
 class PersonneManager
 {
-    static function create_personn($nb)
-    {
-
-        // use the factory to create a Faker\Generator instance
-        $faker = Factory::create('fr_FR');
-
-
-        // initialisation talbeau vide
-        $tabPersonnes = [];
-
-
-        echo "<table class='table table-bordered'>";
-        echo "<thead class='thead-dark'><tr class='table-primary'><th> </th><th>Nom</th><th>Prénom</th><th>Adresse</th><th>Code Postal</th><th>Pays</th><th>Société</th></tr></thead>";
-
-
-        for ($i = 0; $i < $nb; $i++) {
-
-            // création des attributs de $personn et stockage dans un tableau
-            $tabPersonnes['nom'] = $faker->lastname();
-            $tabPersonnes['prenom'] = $faker->firstname();
-            $tabPersonnes['adresse'] = $faker->address();
-            $tabPersonnes['codePostal'] = $faker->postcode();
-            $tabPersonnes['pays'] = $faker->country();
-            $tabPersonnes['societe'] = $faker->company();
-
-            $personn = new Personne($tabPersonnes);
-
-            echo "<tbody>";
-            echo "<tr><th>" . $i + 1 . "</th><td>" . $personn->getNom() . "</td>";
-            echo "<td>" . $personn->getPrenom() . "</td>";
-            echo "<td>" . $personn->getAdresse() . "</td>";
-            echo "<td>" . $personn->getCodePostal() . "</td>";
-            echo "<td>" . $personn->getPays() . "</td>";
-            echo "<td>" . $personn->getSociete() . "</td></tr></tbody>";
-
-            // Remise à zéro du talbeau avant de revenir dans la boucle
-            $tabPersonnes = [];
-        }
-
-        echo "</table>";
-    }
-
-
 
     private $connexion;
 
-
-    public function __construct($connexion)
-    {
-        $this->connexion = $connexion;
-    }
 
     public function getConnexion()
     {
@@ -75,29 +27,134 @@ class PersonneManager
         $this->connexion = $connexion;
     }
 
-
-
-    public function create(Personne $personne)
+    public function __construct($connexion)
     {
-        // PREPARE THE REQUEST
+        $this->connexion = $connexion;
+    }
 
+
+
+    public static function create_personn($nb)
+    {
+
+        // use the factory to create a Faker\Generator instance
+        $faker = Factory::create('fr_FR');
+
+
+
+
+        echo "<table class='table table-bordered'>";
+        echo "<thead class='thead-dark'><tr class='table-primary'><th> </th><th>Nom</th><th>Prénom</th><th>Adresse</th><th>Code Postal</th><th>Pays</th><th>Société</th></tr></thead>";
+
+
+        for ($i = 0; $i < $nb; $i++) {
+
+            $FakePersonn = new Personne(
+                $faker->lastname(),
+                $faker->firstname(),
+                $faker->address(),
+                $faker->postcode(),
+                $faker->city(),
+                $faker->country(),
+                $faker->company()
+            );
+
+
+            echo "<tbody>";
+            echo "<tr><th>" . $i + 1 . "</th>";
+            echo "<td>" . $FakePersonn->getNom() . "</td>";
+            echo "<td>" . $FakePersonn->getPrenom() . "</td>";
+            echo "<td>" . $FakePersonn->getAdresse() . "</td>";
+            echo "<td>" . $FakePersonn->getCodePostal() . "</td>";
+            echo "<td>" . $FakePersonn->getPays() . "</td>";
+            echo "<td>" . $FakePersonn->getSociete() . "</td></tr></tbody>";
+        }
+
+        echo "</table>";
+    }
+
+
+
+    /**
+     * Méthode d'insertion des données en base
+     * 
+     */
+    public function insert(Personne $personne)
+    {
         $stmt = $this->getConnexion()->prepare(
-            'INSERT INTO Adresse_faker SET Nom=:Nom, Prenom=:Prenom, Adresse= :Adresse, CodePostal=:CodePostal, Pays=:Pays, Societe=:Societe'
+            'INSERT INTO Faker SET nom=:nom, prenom=:prenom, adresse=:adresse, codePostal=:codePostal, ville=:ville, pays=:pays, societe=:societe'
         );
-
-
-        // BIND THE VALUES INTO THE STATEMENT
-
-        $stmt->bindValue(':Nom', $personne->getNom());
-        $stmt->bindValue(':Prenom', $personne->getPrenom());
-        $stmt->bindValue(':Adresse', $personne->getAdresse());
-        $stmt->bindValue(':CodePostal', $personne->getCodePostal());
-        $stmt->bindValue(':Pays', $personne->getPays());
-        $stmt->bindValue(':Societe', $personne->getSociete());
-
-
-        // EXCUTE THE REQUEST
+        $stmt->bindValue(':nom', $personne->getNom());
+        $stmt->bindValue(':prenom', $personne->getPrenom());
+        $stmt->bindValue(':adresse', $personne->getAdresse());
+        $stmt->bindValue(':codePostal', $personne->getCodePostal());
+        $stmt->bindValue(':pays', $personne->getPays());
+        $stmt->bindValue(':ville', $personne->getVille());
+        $stmt->bindValue(':societe', $personne->getSociete());
 
         $stmt->execute();
+    }
+
+
+    public function readAll()
+    {
+        $personnes = [];
+        $query = $this->getConnexion()->query(
+            "SELECT * FROM Faker"
+        );
+
+        while ($data = $query->fetch(\PDO::FETCH_ASSOC)) {
+            $personnes[] = new Personne(
+                nom: $data['nom'],
+                prenom: $data['prenom'],
+                adresse: $data['adresse'],
+                codePostal: $data['codePostal'],
+                ville: $data['ville'],
+                pays: $data['pays'],
+                societe: $data['societe']
+            );
+        }
+
+        return $personnes;
+    }
+
+    public function readById($id)
+    {
+        $id = (int) $id;
+
+        // REQUETE SQL
+        $query = $this->getConnexion()->query(
+            'SELECT id, nom, prenom, adresse, codePostal, ville, pays, societe
+            FROM Faker 
+            WHERE id = ' . $id
+        );
+
+        // PDO::FETCH_ASSOC: returns an array indexed by column name as returned in your result set
+
+
+        // EXECUTION DE LA REQUETE SQL
+        $datas = $query->fetch(\PDO::FETCH_ASSOC);
+
+        // CREATION ET RENVOI DE LA PERSONNE
+
+        return new Personne(
+            $datas["nom"],
+            $datas["prenom"],
+            $datas["adresse"],
+            $datas["codePostal"],
+            $datas["ville"],
+            $datas["pays"],
+            $datas["societe"]
+        );
+    }
+
+
+    public function update(Personne $personne)
+    {
+    }
+
+
+    public function delete($id)
+    {
     }
 }

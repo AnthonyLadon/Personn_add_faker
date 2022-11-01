@@ -35,9 +35,34 @@
     }
 
 
+    // Test insertion d'une personne:
+
     $test = new PersonneManager($connexionDb);
-    $nouvellePersonne = new Personne("Dupont", "Jean", "3 rue des gens", 4000, "Liege", "Belgique",);
-    $test->create($nouvellePersonne);
+    $nouvellePersonne = new Personne("Maurice", "Phillipe", "12 rue des Choses", 4000, "Liege", "Belgique", "clopes qui puent");
+    // $test->insert($nouvellePersonne);
+
+
+    // test de la fonction magique __toString() sur une personne instanciée:
+    //---> echo $nouvellePersonne;
+
+
+    // TEST READ ALL
+
+    $personneRecup = $test->readAll();
+
+    echo "<h2>Liste des personnes recupérées dans la BD</h2>";
+
+    foreach ($personneRecup as $personne) {
+        echo $personne . "<br>";
+    }
+
+
+    // TEST READ ID
+
+    echo "<h2>Personne récupérée par son ID</h2>";
+
+    $personneRecupId = $test->readById(3);
+    echo $personneRecupId;
 
 
     ?>

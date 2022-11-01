@@ -1,0 +1,13 @@
+{
+    "name": "app/demo",
+    "description": "premier projet utilisant composer et faker",
+    "type": "project",
+    "require": {
+        "fakerphp/faker": "^1.20"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Demo\\": "src/"
+        }
+    }
+}

@@ -10,22 +10,25 @@ namespace App\Demo\entity;
 
 class Personne
 {
+    protected $id = 0;
     private $Nom;
     private $Prenom;
     private $Adresse;
     private $CodePostal;
+    private $Ville;
     private $Pays;
     private $Societe;
 
 
-    public function __construct($arg)
+    public function __construct($nom, $prenom, $adresse, $codePostal, $ville, $pays, $societe)
     {
-        $this->Nom = $arg['nom'];
-        $this->Prenom = $arg['prenom'];
-        $this->Adresse = $arg['adresse'];
-        $this->CodePostal = $arg['codePostal'];
-        $this->Pays = $arg['pays'];
-        $this->Societe = $arg['societe'];
+        $this->Nom = $nom;
+        $this->Prenom = $prenom;
+        $this->Adresse = $adresse;
+        $this->CodePostal = $codePostal;
+        $this->Ville = $ville;
+        $this->Pays = $pays;
+        $this->Societe = $societe;
     }
 
     function getNom()
@@ -68,6 +71,16 @@ class Personne
         return $this->CodePostal = $codePostal;
     }
 
+    function getVille()
+    {
+        return $this->Ville;
+    }
+
+    function setVille($ville)
+    {
+        return $this->Ville = $ville;
+    }
+
     function getPays()
     {
         return $this->Pays;
@@ -86,5 +99,10 @@ class Personne
     function setSociete($societe)
     {
         return $this->Societe = $societe;
+    }
+
+    public function __toString()
+    {
+        return $this->getNom() . " " . $this->getPrenom() . " " . $this->getAdresse() . " " . $this->getCodePostal() . " " . $this->getVille() . " " . $this->getPays() . " " . $this->getSociete();
     }
 }

@@ -1,13 +1,19 @@
 <?php
 
 
+namespace App\Demo\connexion;
 
-try {
-    $connexionDb = new PDO(
-        'mysql:host=localhost;dbname=poo_php',
-        'root',
-        'root'
-    );
-} catch (Exception $exc) {
-    die('Erreur : ' . $exc->getMessage());
+
+class Connexion
+{
+
+    public static function getConnexion()
+    {
+
+        return new \PDO(
+            'mysql:host=localhost;dbname=poo_php',
+            'root',
+            'root'
+        );
+    }
 }
