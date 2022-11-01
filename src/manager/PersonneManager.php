@@ -6,9 +6,10 @@ use Faker\Factory;
 use App\Demo\entity\Personne;
 
 
+
 /**
- * Class PersonneManager
- * Permet de créer un nombre d'objet Personne défini avec de faux attributs générés 
+ *PersonneManager
+ *Gestion des personnes (CRUD, Faker)
  */
 
 class PersonneManager
@@ -33,7 +34,10 @@ class PersonneManager
     }
 
 
-
+    /**
+     * create_personn
+     * Permet de créer un nombre d'objet Personne défini avec de faux attributs générés 
+     */
     public static function create_personn($nb)
     {
 

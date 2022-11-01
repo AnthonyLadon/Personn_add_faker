@@ -19,7 +19,7 @@ class Personne
     private $Pays;
     private $Societe;
 
-
+    // fonction constructeur avec ses parametres attendus
     public function __construct($nom, $prenom, $adresse, $codePostal, $ville, $pays, $societe)
     {
         $this->Nom = $nom;
@@ -101,6 +101,7 @@ class Personne
         return $this->Societe = $societe;
     }
 
+    // fonction magique permet de echo l'objet Personne instancié
     public function __toString()
     {
         return $this->getNom() . " " . $this->getPrenom() . " " . $this->getAdresse() . " " . $this->getCodePostal() . " " . $this->getVille() . " " . $this->getPays() . " " . $this->getSociete();
