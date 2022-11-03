@@ -86,11 +86,12 @@ class PersonneManager
     public function insert(Personne $personne)
     {
         $stmt = $this->getConnexion()->prepare(
-            'INSERT INTO Faker SET nom=:nom, prenom=:prenom, adresse=:adresse, codePostal=:codePostal, ville=:ville, pays=:pays, societe=:societe'
+            'INSERT INTO Faker SET nom=:nom, prenom=:prenom, Personne$personne=:Personne$personne, codePostal=:codePostal, ville=:ville, pays=:pays, societe=:societe'
         );
+        // la methode bindValue lie les valeurs (':nom', valeur)
         $stmt->bindValue(':nom', $personne->getNom());
         $stmt->bindValue(':prenom', $personne->getPrenom());
-        $stmt->bindValue(':adresse', $personne->getAdresse());
+        $stmt->bindValue(':Personne$personne', $personne->getAdresse());
         $stmt->bindValue(':codePostal', $personne->getCodePostal());
         $stmt->bindValue(':pays', $personne->getPays());
         $stmt->bindValue(':ville', $personne->getVille());
@@ -133,13 +134,16 @@ class PersonneManager
             WHERE id = ' . $id
         );
 
-        // PDO::FETCH_ASSOC: returns an array indexed by column name as returned in your result set
-
 
         // EXECUTION DE LA REQUETE SQL
         $datas = $query->fetch(\PDO::FETCH_ASSOC);
 
-        // CREATION ET RENVOI DE LA PERSONNE
+        // PDO::FETCH_ASSOC: retourne une tableau indexé
+        // "nom du champ" => "valeur"
+
+
+        // CREATION ET RENVOI DE LA PERSONNE (les clefs sont les meme que 
+        // les nom de champs de la DB)
 
         return new Personne(
             $datas["nom"],
@@ -153,12 +157,28 @@ class PersonneManager
     }
 
 
-    public function update(Personne $personne)
+    public function update($id, Personne $personne)
     {
+        $stmt = $this->getConnexion()->prepare(
+            'UPDATE Faker SET nom=:nom, prenom=:prenom, adresse=:adresse, codePostal=:codePostal, ville=:ville, pays=:pays, societe=:societe WHERE id=:id'
+        );
+
+        $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':nom', $personne->getNom());
+        $stmt->bindValue(':prenom', $personne->getPrenom());
+        $stmt->bindValue(':adresse', $personne->getAdresse());
+        $stmt->bindValue(':codePostal', $personne->getCodePostal());
+        $stmt->bindValue(':pays', $personne->getPays());
+        $stmt->bindValue(':ville', $personne->getVille());
+        $stmt->bindValue(':societe', $personne->getSociete());
+
+
+        $stmt->execute();
     }
 
 
     public function delete($id)
     {
+        $this->getConnexion()->exec('DELETE FROM Faker WHERE id=' . $id);
     }
 }

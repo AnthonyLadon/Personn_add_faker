@@ -31,6 +31,11 @@ class Personne
         $this->Societe = $societe;
     }
 
+    function getId()
+    {
+        return $this->id;
+    }
+
     function getNom()
     {
         return $this->Nom;
